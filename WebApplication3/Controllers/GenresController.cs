@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication3
 {
@@ -18,6 +19,8 @@ namespace WebApplication3
         }
 
         // GET: Genres
+        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
               return _context.Genres != null ? 
@@ -44,6 +47,7 @@ namespace WebApplication3
         }
 
         // GET: Genres/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +58,7 @@ namespace WebApplication3
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("GenreId,Name,Description")] Genre genre)
         {
             if (ModelState.IsValid)
@@ -66,6 +71,7 @@ namespace WebApplication3
         }
 
         // GET: Genres/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Genres == null)
@@ -86,6 +92,7 @@ namespace WebApplication3
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("GenreId,Name,Description")] Genre genre)
         {
             if (id != genre.GenreId)
@@ -117,6 +124,7 @@ namespace WebApplication3
         }
 
         // GET: Genres/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Genres == null)
@@ -137,6 +145,7 @@ namespace WebApplication3
         // POST: Genres/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Genres == null)
