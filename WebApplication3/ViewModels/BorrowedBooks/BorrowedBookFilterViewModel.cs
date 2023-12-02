@@ -11,8 +11,9 @@ namespace WebApplication3
         public bool? Returned { get; }
         public int EmployeeId { get; }
         public int ReaderId { get; }
+        public string BookTitle { get; }
 
-        public BorrowedBookFilterViewModel(List<Employee> employees, List<Reader> readers, DateTime? borrowDate, DateTime? returnDate, bool? returned, int employeeId, int readerId)
+        public BorrowedBookFilterViewModel(List<Employee> employees, List<Reader> readers, DateTime? borrowDate, DateTime? returnDate, bool? returned, int employeeId, int readerId, string bookTitle)
         {
             employees.Insert(0, new Employee { EmployeeId = 0, FullName = "Все" });
             readers.Insert(0, new Reader { ReaderId = 0, FullName = "Все" });
@@ -25,6 +26,7 @@ namespace WebApplication3
             ReturnDate = returnDate;
             EmployeeId = employeeId;
             ReaderId = readerId;
+            BookTitle = bookTitle;
         }
     }
 }

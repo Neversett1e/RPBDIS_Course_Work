@@ -21,7 +21,7 @@ namespace WebApplication3
         // GET: Books
         [Authorize(Roles = "Admin")]
         [AllowAnonymous]
-        public async Task<IActionResult> Index(int page = 1, string isbn = null, string title = null, string author = null, int publisherId = 0, int genreId = 0, decimal? price = null, SortState sortOrder = SortState.TitleAsc)
+        public async Task<IActionResult> Index(int page = 1, string isbn = null, string title = null, string author = null, int publisherId = 0, int genreId = 0, decimal? price = null, SortState sortOrder = SortState.TitleAsc, int publicationYear = 0)
         {
             IQueryable<Book> books = _context.Books.Include(b => b.Genre).Include(b => b.Publisher);
 
@@ -55,6 +55,11 @@ namespace WebApplication3
                 books = books.Where(b => b.Price == price);
             }
 
+            if (publicationYear != 0)
+            {
+                books = books.Where(b => b.PublicationYear == publicationYear);
+            }
+
             int pageSize = 10;
 
             var count = await books.CountAsync();
@@ -83,6 +88,9 @@ namespace WebApplication3
                 case SortState.PriceDesc:
                     items = items.OrderByDescending(b => b.Price).ToList();
                     break;
+                case SortState.PublicationYearDesc:
+                    items = items.OrderByDescending(b => b.PublicationYear).ToList();
+                    break;
                 default:
                     items = items.OrderBy(b => b.Title).ToList();
                     break;
@@ -91,7 +99,7 @@ namespace WebApplication3
             var filterViewModel = new BooksFilterViewModel(
                 _context.Publishers.ToList(),
                 _context.Genres.ToList(),
-                isbn, title, author, publisherId, genreId, price
+                isbn, title, author, publisherId, genreId, price, publicationYear
             );
 
             var sortViewModel = new BooksSortViewModel(sortOrder);

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace WebApplication3
 {
@@ -28,7 +29,8 @@ namespace WebApplication3
     bool? returned = null,
     int employeeId = 0,
     int readerId = 0,
-    BorrowedBookSortState sortOrder = BorrowedBookSortState.BorrowDateAsc
+    BorrowedBookSortState sortOrder = BorrowedBookSortState.BorrowDateAsc,
+    string bookTitle = null
             )
         {
             IQueryable<BorrowedBook> borrowedBooks = _context.BorrowedBooks
@@ -61,6 +63,11 @@ namespace WebApplication3
                 borrowedBooks = borrowedBooks.Where(b => b.ReaderId == readerId);
             }
 
+            if (!string.IsNullOrEmpty(bookTitle))
+            {
+                borrowedBooks = borrowedBooks.Where(b => b.Book.Title.Contains(bookTitle));
+            }
+
             int pageSize = 10;
 
             var count = await borrowedBooks.CountAsync();
@@ -87,15 +94,18 @@ namespace WebApplication3
                 case BorrowedBookSortState.ReaderDesc:
                     items = items.OrderByDescending(b => b.Reader.FullName).ToList();
                     break;
+                case BorrowedBookSortState.BookTitleDesc:
+                    items = items.OrderByDescending(b => b.Book.Title).ToList();
+                    break;
                 default:
-                    items = items.OrderBy(b => b.BorrowDate).ToList();
+                    items = items.OrderBy(b => b.Book.Title).ToList();
                     break;
             }
 
             var filterViewModel = new BorrowedBookFilterViewModel(
                 _context.Employees.ToList(),
                 _context.Readers.ToList(),
-                borrowDate, returnDate, returned, employeeId, readerId
+                borrowDate, returnDate, returned, employeeId, readerId, bookTitle
             );
 
             var sortViewModel = new BorrowedBookSortViewModel(sortOrder);

@@ -10,7 +10,8 @@ namespace WebApplication3
         ReturnDateAsc, ReturnDateDesc,
         ReturnedAsc, ReturnedDesc,
         EmployeeAsc, EmployeeDesc,
-        ReaderAsc, ReaderDesc
+        ReaderAsc, ReaderDesc,
+        BookTitleAsc, BookTitleDesc
     }
 
     public class BorrowedBookSortViewModel
@@ -21,6 +22,7 @@ namespace WebApplication3
         public BorrowedBookSortState EmployeeSort { get; }
         public BorrowedBookSortState ReaderSort { get; }
         public BorrowedBookSortState Current { get; }
+        public BorrowedBookSortState BookTitleSort { get; }
 
         public BorrowedBookSortViewModel(BorrowedBookSortState state)
         {
@@ -29,6 +31,7 @@ namespace WebApplication3
             ReturnedSort = state == BorrowedBookSortState.ReturnedAsc ? BorrowedBookSortState.ReturnedDesc : BorrowedBookSortState.ReturnedAsc;
             EmployeeSort = state == BorrowedBookSortState.EmployeeAsc ? BorrowedBookSortState.EmployeeDesc : BorrowedBookSortState.EmployeeAsc;
             ReaderSort = state == BorrowedBookSortState.ReaderAsc ? BorrowedBookSortState.ReaderDesc : BorrowedBookSortState.ReaderAsc;
+            BookTitleSort = state == BorrowedBookSortState.BookTitleAsc ? BorrowedBookSortState.BookTitleDesc : BorrowedBookSortState.BookTitleAsc;
 
             Current = state;
         }

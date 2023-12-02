@@ -17,6 +17,9 @@
     <label class="form-inline mt-1">Author: </label>
     <input type="text" class="form-control" name="author" value="@Model.FilterViewModel.Author" />
 
+    <label class="form-inline mt-1">Publication Year: </label>
+    <input type="text" class="form-control" name="publicationYear" value="@Model.FilterViewModel.PublicationYear" />
+
     <label class="form-inline mt-1">Publisher: </label>
     <select class="form-control" name="publisherId" asp-items="Model.FilterViewModel.Publishers"></select>
 
@@ -60,7 +63,12 @@
                 </a>
             </th>
             <th>
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.PublicationYearSort)"
+                   asp-route-publicationYear="@(Model.FilterViewModel.PublicationYear)">
                 @Html.DisplayNameFor(model => model.Items.First().PublicationYear)
+                </a>
             </th>
             <th>
                 <a asp-action="Index"

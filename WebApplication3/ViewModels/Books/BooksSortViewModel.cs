@@ -7,7 +7,8 @@
         AuthorAsc, AuthorDesc,
         PublisherAsc, PublisherDesc,
         GenreAsc, GenreDesc,
-        PriceAsc, PriceDesc
+        PriceAsc, PriceDesc,
+        PublicationYearAsc, PublicationYearDesc
     }
 
     public class BooksSortViewModel
@@ -19,6 +20,8 @@
         public SortState GenreSort { get; }
         public SortState PriceSort { get; }
         public SortState Current { get; }
+        public SortState PublicationYearSort { get; }
+
 
         public BooksSortViewModel(SortState state)
         {
@@ -28,6 +31,7 @@
             PublisherSort = state == SortState.PublisherAsc ? SortState.PublisherDesc : SortState.PublisherAsc;
             GenreSort = state == SortState.GenreAsc ? SortState.GenreDesc : SortState.GenreAsc;
             PriceSort = state == SortState.PriceAsc ? SortState.PriceDesc : SortState.PriceAsc;
+            PublicationYearSort = state == SortState.PublicationYearAsc ? SortState.PublicationYearDesc : SortState.PublicationYearAsc;
 
             Current = state;
         }

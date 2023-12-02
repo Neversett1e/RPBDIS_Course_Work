@@ -11,11 +11,12 @@ namespace WebApplication3
         public int? PublisherId { get; }
         public int? GenreId { get; }
         public decimal? Price { get; }
+        public int? PublicationYear { get; }
 
         public SelectList Publishers { get; }
         public SelectList Genres { get; }
 
-        public BooksFilterViewModel(List<Publisher> publishers, List<Genre> genres, string isbn, string title, string author, int? publisherId, int? genreId, decimal? price)
+        public BooksFilterViewModel(List<Publisher> publishers, List<Genre> genres, string isbn, string title, string author, int? publisherId, int? genreId, decimal? price, int? publicationYear)
         {
             publishers.Insert(0, new Publisher { PublisherId = 0, Name = "Все" });
             genres.Insert(0, new Genre { GenreId = 0, Name = "Все" });
@@ -29,6 +30,7 @@ namespace WebApplication3
             PublisherId = publisherId;
             GenreId = genreId;
             Price = price;
+            PublicationYear = publicationYear;
         }
     }
 }

@@ -48,8 +48,14 @@ namespace WebApplication3
                 case GenresSortState.NameDesc:
                     items = items.OrderByDescending(g => g.Name).ToList();
                     break;
+                case GenresSortState.NameAsc:
+                    items = items.OrderByDescending(g => g.Name).Reverse().ToList();
+                    break;
                 case GenresSortState.DescriptionDesc:
                     items = items.OrderByDescending(g => g.Description).ToList();
+                    break;
+                case GenresSortState.DescriptionAsc:
+                    items = items.OrderByDescending(g => g.Description).Reverse().ToList();
                     break;
                 default:
                     items = items.OrderBy(g => g.Name).ToList();

@@ -17,6 +17,9 @@
     <label class="form-inline mt-1">Returned: </label>
     <select class="form-control" name="returned" asp-items="new SelectList(new List<bool>(){true, false})"></select>
 
+    <label class="form-inline mt-1">Title: </label>
+    <input type="text" class="form-control" name="bookTitle" value="@Model.FilterViewModel.BookTitle" />
+
     <label class="form-inline mt-1">Employee: </label>
     <select class="form-control" name="employeeId" asp-items="Model.FilterViewModel.Employees"></select>
 
@@ -59,6 +62,14 @@
             <th>
                 <a asp-action="Index"
                    asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.BookTitleSort)"
+                   asp-route-bookTitle="@(Model.FilterViewModel.BookTitle)">
+                    @Html.DisplayNameFor(model => model.Items.First().Book.Title)
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
                    asp-route-sortOrder="@(Model.SortViewModel.EmployeeSort)"
                    asp-route-employeeId="@(Model.FilterViewModel.EmployeeId)">
                     @Html.DisplayNameFor(model => model.Items.First().Employee.EmployeeId)
@@ -89,13 +100,13 @@
                     @Html.DisplayFor(modelItem => item.Returned)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Book.BookId)
+                    @Html.DisplayFor(modelItem => item.Book.Title)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Employee.EmployeeId)
+                    @Html.DisplayFor(modelItem => item.Employee.FullName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Reader.ReaderId)
+                    @Html.DisplayFor(modelItem => item.Reader.FullName)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.BorrowId">Edit</a> |
@@ -111,6 +122,7 @@
            page-url-borrowDate="@(Model.FilterViewModel.BorrowDate?.ToString("yyyy-MM-dd"))"
            page-url-returnDate="@(Model.FilterViewModel.ReturnDate?.ToString("yyyy-MM-dd"))"
            page-url-returned="@(Model.FilterViewModel.Returned)"
+           page-url-bookTitle="@(Model.FilterViewModel.BookTitle)"
            page-url-employeeId="@(Model.FilterViewModel.EmployeeId)"
            page-url-readerId="@(Model.FilterViewModel.ReaderId)"
            page-url-sortOrder="@(Model.SortViewModel.Current)"></page-link>
