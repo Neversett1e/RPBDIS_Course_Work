@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace WebApplication3.ViewModels
+namespace WebApplication3
 {
     public enum BorrowedBookSortState
     {
         BorrowDateAsc, BorrowDateDesc,
         ReturnDateAsc, ReturnDateDesc,
         ReturnedAsc, ReturnedDesc,
-        EmployeeAsc, EmployeeDesc
+        EmployeeAsc, EmployeeDesc,
+        ReaderAsc, ReaderDesc
     }
 
     public class BorrowedBookSortViewModel
@@ -18,7 +19,7 @@ namespace WebApplication3.ViewModels
         public BorrowedBookSortState ReturnDateSort { get; }
         public BorrowedBookSortState ReturnedSort { get; }
         public BorrowedBookSortState EmployeeSort { get; }
-
+        public BorrowedBookSortState ReaderSort { get; }
         public BorrowedBookSortState Current { get; }
 
         public BorrowedBookSortViewModel(BorrowedBookSortState state)
@@ -27,6 +28,7 @@ namespace WebApplication3.ViewModels
             ReturnDateSort = state == BorrowedBookSortState.ReturnDateAsc ? BorrowedBookSortState.ReturnDateDesc : BorrowedBookSortState.ReturnDateAsc;
             ReturnedSort = state == BorrowedBookSortState.ReturnedAsc ? BorrowedBookSortState.ReturnedDesc : BorrowedBookSortState.ReturnedAsc;
             EmployeeSort = state == BorrowedBookSortState.EmployeeAsc ? BorrowedBookSortState.EmployeeDesc : BorrowedBookSortState.EmployeeAsc;
+            ReaderSort = state == BorrowedBookSortState.ReaderAsc ? BorrowedBookSortState.ReaderDesc : BorrowedBookSortState.ReaderAsc;
 
             Current = state;
         }

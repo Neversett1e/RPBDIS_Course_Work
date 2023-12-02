@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WebApplication3;
+using Microsoft.AspNetCore.Authorization;
 
-namespace WebApplication3.Controllers
+namespace WebApplication3
 {
     public class BorrowedBooksController : Controller
     {
@@ -19,13 +19,97 @@ namespace WebApplication3.Controllers
         }
 
         // GET: BorrowedBooks
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Index(
+    int page = 1,
+    DateTime? borrowDate = null,
+    DateTime? returnDate = null,
+    bool? returned = null,
+    int employeeId = 0,
+    int readerId = 0,
+    BorrowedBookSortState sortOrder = BorrowedBookSortState.BorrowDateAsc
+            )
         {
-            var libraryDBContext = _context.BorrowedBooks.Include(b => b.Book).Include(b => b.Employee).Include(b => b.Reader);
-            return View(await libraryDBContext.ToListAsync());
+            IQueryable<BorrowedBook> borrowedBooks = _context.BorrowedBooks
+                .Include(b => b.Book)
+                .Include(b => b.Employee)
+                .Include(b => b.Reader);
+
+            if (borrowDate.HasValue)
+            {
+                borrowedBooks = borrowedBooks.Where(b => b.BorrowDate == borrowDate);
+            }
+
+            if (returnDate.HasValue)
+            {
+                borrowedBooks = borrowedBooks.Where(b => b.ReturnDate == returnDate);
+            }
+
+            if (returned.HasValue)
+            {
+                borrowedBooks = borrowedBooks.Where(b => b.Returned == returned);
+            }
+
+            if (employeeId != 0)
+            {
+                borrowedBooks = borrowedBooks.Where(b => b.EmployeeId == employeeId);
+            }
+
+            if (readerId != 0)
+            {
+                borrowedBooks = borrowedBooks.Where(b => b.ReaderId == readerId);
+            }
+
+            int pageSize = 10;
+
+            var count = await borrowedBooks.CountAsync();
+            var items = await borrowedBooks
+                .OrderBy(b => b.BorrowDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            switch (sortOrder)
+            {
+                case BorrowedBookSortState.BorrowDateDesc:
+                    items = items.OrderByDescending(b => b.BorrowDate).ToList();
+                    break;
+                case BorrowedBookSortState.ReturnDateDesc:
+                    items = items.OrderByDescending(b => b.ReturnDate).ToList();
+                    break;
+                case BorrowedBookSortState.ReturnedDesc:
+                    items = items.OrderByDescending(b => b.Returned).ToList();
+                    break;
+                case BorrowedBookSortState.EmployeeDesc:
+                    items = items.OrderByDescending(b => b.Employee.FullName).ToList();
+                    break;
+                case BorrowedBookSortState.ReaderDesc:
+                    items = items.OrderByDescending(b => b.Reader.FullName).ToList();
+                    break;
+                default:
+                    items = items.OrderBy(b => b.BorrowDate).ToList();
+                    break;
+            }
+
+            var filterViewModel = new BorrowedBookFilterViewModel(
+                _context.Employees.ToList(),
+                _context.Readers.ToList(),
+                borrowDate, returnDate, returned, employeeId, readerId
+            );
+
+            var sortViewModel = new BorrowedBookSortViewModel(sortOrder);
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+
+            PaginationViewModel<BorrowedBook, BorrowedBookFilterViewModel, BorrowedBookSortViewModel> viewModel =
+                new PaginationViewModel<BorrowedBook, BorrowedBookFilterViewModel, BorrowedBookSortViewModel>(items, pageViewModel, filterViewModel, sortViewModel);
+
+            return View(viewModel);
         }
 
+
         // GET: BorrowedBooks/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.BorrowedBooks == null)
@@ -47,6 +131,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: BorrowedBooks/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["BookId"] = new SelectList(_context.Books, "BookId", "BookId");
@@ -60,6 +145,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("BorrowId,BookId,ReaderId,BorrowDate,ReturnDate,Returned,EmployeeId")] BorrowedBook borrowedBook)
         {
             if (ModelState.IsValid)
@@ -75,6 +161,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: BorrowedBooks/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.BorrowedBooks == null)
@@ -98,6 +185,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("BorrowId,BookId,ReaderId,BorrowDate,ReturnDate,Returned,EmployeeId")] BorrowedBook borrowedBook)
         {
             if (id != borrowedBook.BorrowId)
@@ -132,6 +220,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: BorrowedBooks/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.BorrowedBooks == null)
@@ -155,6 +244,7 @@ namespace WebApplication3.Controllers
         // POST: BorrowedBooks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.BorrowedBooks == null)

@@ -1,10 +1,27 @@
-﻿@model IEnumerable<WebApplication3.Employee>
+﻿@model PaginationViewModel<Employee, EmployeeFilterViewModel, EmployeeSortViewModel>
+@addTagHelper *, WebApplication3
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+
+<form method="get" class="mt-1">
+    <label class="form-inline mt-1">Full Name: </label>
+    <input type="text" class="form-control" name="fullName" value="@Model.FilterViewModel.FullName" />
+
+    <label class="form-inline mt-1">Position: </label>
+    <input type="text" class="form-control" name="position" value="@Model.FilterViewModel.Position" />
+
+    <label class="form-inline mt-1">Phone Number: </label>
+    <input type="text" class="form-control" name="phoneNumber" value="@Model.FilterViewModel.PhoneNumber" />
+
+    <label class="form-inline mt-1">Address: </label>
+    <input type="text" class="form-control" name="address" value="@Model.FilterViewModel.Address" />
+
+    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+</form>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,41 +30,70 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FullName)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.FullNameSort)"
+                   asp-route-fullName="@(Model.FilterViewModel.FullName)">
+                    @Html.DisplayNameFor(model => model.Items.First().FullName)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Position)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.PositionSort)"
+                   asp-route-position="@(Model.FilterViewModel.Position)">
+                    @Html.DisplayNameFor(model => model.Items.First().Position)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.PhoneNumberSort)"
+                   asp-route-phoneNumber="@(Model.FilterViewModel.PhoneNumber)">
+                    @Html.DisplayNameFor(model => model.Items.First().PhoneNumber)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Address)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.AddressSort)"
+                   asp-route-address="@(Model.FilterViewModel.Address)">
+                    @Html.DisplayNameFor(model => model.Items.First().Address)
+                </a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Position)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EmployeeId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Position)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.EmployeeId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<page-link page-model="Model.PageViewModel" page-action="Index"
+           page-url-fullName="@(Model.FilterViewModel.FullName)"
+           page-url-position="@(Model.FilterViewModel.Position)"
+           page-url-phoneNumber="@(Model.FilterViewModel.PhoneNumber)"
+           page-url-address="@(Model.FilterViewModel.Address)"
+           page-url-sortOrder="@(Model.SortViewModel.Current)"></page-link>
+

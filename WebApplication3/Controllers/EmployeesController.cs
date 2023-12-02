@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication3;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication3.Controllers
 {
@@ -19,14 +20,79 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Index(
+    string fullName,
+    string position,
+    string phoneNumber,
+    string address,
+    EmployeeSortState sortOrder = EmployeeSortState.FullNameAsc
+)
         {
-              return _context.Employees != null ? 
-                          View(await _context.Employees.ToListAsync()) :
-                          Problem("Entity set 'LibraryDBContext.Employees'  is null.");
+            IQueryable<Employee> employees = _context.Employees;
+
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                employees = employees.Where(e => e.FullName.Contains(fullName));
+            }
+
+            if (!string.IsNullOrEmpty(position))
+            {
+                employees = employees.Where(e => e.Position.Contains(position));
+            }
+
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                employees = employees.Where(e => e.PhoneNumber.Contains(phoneNumber));
+            }
+
+            if (!string.IsNullOrEmpty(address))
+            {
+                employees = employees.Where(e => e.Address.Contains(address));
+            }
+
+            int pageSize = 10;
+
+            var count = await employees.CountAsync();
+            var items = await employees
+                .OrderByDescending(e => e.FullName) // Assuming default sorting is descending by full name
+                .Take(pageSize)
+                .ToListAsync();
+
+            switch (sortOrder)
+            {
+                case EmployeeSortState.FullNameAsc:
+                    items = items.OrderBy(e => e.FullName).ToList();
+                    break;
+                case EmployeeSortState.PositionAsc:
+                    items = items.OrderBy(e => e.Position).ToList();
+                    break;
+                case EmployeeSortState.PhoneNumberAsc:
+                    items = items.OrderBy(e => e.PhoneNumber).ToList();
+                    break;
+                case EmployeeSortState.AddressAsc:
+                    items = items.OrderBy(e => e.Address).ToList();
+                    break;
+                default:
+                    items = items.OrderByDescending(e => e.FullName).ToList();
+                    break;
+            }
+
+            var filterViewModel = new EmployeeFilterViewModel(fullName, position, phoneNumber, address);
+            var sortViewModel = new EmployeeSortViewModel(sortOrder);
+            var pageViewModel = new PageViewModel(count, 1, pageSize);
+
+            var viewModel = new PaginationViewModel<Employee, EmployeeFilterViewModel, EmployeeSortViewModel>(
+                items, pageViewModel, filterViewModel, sortViewModel
+            );
+
+            return View(viewModel);
         }
 
+
         // GET: Employees/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Employees == null)
@@ -45,6 +111,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Employees/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +122,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("EmployeeId,FullName,Position,PhoneNumber,Address")] Employee employee)
         {
             if (ModelState.IsValid)
@@ -67,6 +135,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Employees/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Employees == null)
@@ -87,6 +156,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FullName,Position,PhoneNumber,Address")] Employee employee)
         {
             if (id != employee.EmployeeId)
@@ -118,6 +188,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Employees/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Employees == null)
@@ -138,6 +209,7 @@ namespace WebApplication3.Controllers
         // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Employees == null)

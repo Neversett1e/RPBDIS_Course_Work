@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication3;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication3.Controllers
 {
@@ -19,14 +20,72 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Publishers
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Index(
+    int page = 1,
+    string name = null,
+    string city = null,
+    string address = null,
+    PublisherSortState sortOrder = PublisherSortState.NameAsc
+)
         {
-              return _context.Publishers != null ? 
-                          View(await _context.Publishers.ToListAsync()) :
-                          Problem("Entity set 'LibraryDBContext.Publishers'  is null.");
+            IQueryable<Publisher> publishers = _context.Publishers;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                publishers = publishers.Where(p => p.Name.Contains(name));
+            }
+
+            if (!string.IsNullOrEmpty(city))
+            {
+                publishers = publishers.Where(p => p.City.Contains(city));
+            }
+
+            if (!string.IsNullOrEmpty(address))
+            {
+                publishers = publishers.Where(p => p.Address.Contains(address));
+            }
+
+            int pageSize = 10;
+
+            var count = await publishers.CountAsync();
+            var items = await publishers
+                .OrderBy(p => p.Name) // Default sorting
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            switch (sortOrder)
+            {
+                case PublisherSortState.NameDesc:
+                    items = items.OrderByDescending(p => p.Name).ToList();
+                    break;
+                case PublisherSortState.CityDesc:
+                    items = items.OrderByDescending(p => p.City).ToList();
+                    break;
+                case PublisherSortState.AddressDesc:
+                    items = items.OrderByDescending(p => p.Address).ToList();
+                    break;
+                default:
+                    items = items.OrderBy(p => p.Name).ToList();
+                    break;
+            }
+
+            var filterViewModel = new PublisherFilterViewModel(name, city, address);
+            var sortViewModel = new PublisherSortViewModel(sortOrder);
+            var pageViewModel = new PageViewModel(count, page, pageSize);
+
+            var viewModel = new PaginationViewModel<Publisher, PublisherFilterViewModel, PublisherSortViewModel>(
+                items, pageViewModel, filterViewModel, sortViewModel
+            );
+
+            return View(viewModel);
         }
 
+
         // GET: Publishers/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Publishers == null)
@@ -45,6 +104,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Publishers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +115,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("PublisherId,Name,City,Address")] Publisher publisher)
         {
             if (ModelState.IsValid)
@@ -67,6 +128,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Publishers/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Publishers == null)
@@ -87,6 +149,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("PublisherId,Name,City,Address")] Publisher publisher)
         {
             if (id != publisher.PublisherId)
@@ -118,6 +181,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Publishers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Publishers == null)
@@ -138,6 +202,7 @@ namespace WebApplication3.Controllers
         // POST: Publishers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Publishers == null)

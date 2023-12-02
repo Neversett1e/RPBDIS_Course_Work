@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 namespace WebApplication3
 {
 
@@ -16,11 +17,13 @@ namespace WebApplication3
                 _roleManager = roleManager;
                 _userManager = userManager;
             }
-            public IActionResult Index() => View(_roleManager.Roles.ToList());
-
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index() => View(_roleManager.Roles.ToList());
+            
             public IActionResult Create() => View();
             [HttpPost]
-            public async Task<IActionResult> Create(string name)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create(string name)
             {
                 if (!string.IsNullOrEmpty(name))
                 {
@@ -41,7 +44,8 @@ namespace WebApplication3
             }
 
             [HttpPost]
-            public async Task<IActionResult> Delete(string id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string id)
             {
                 IdentityRole role = await _roleManager.FindByIdAsync(id);
                 if (role != null)
@@ -52,8 +56,8 @@ namespace WebApplication3
             }
 
             public IActionResult UserList() => View(_userManager.Users.ToList());
-
-            public async Task<IActionResult> Edit(string userId)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(string userId)
             {
                 // получаем пользователя
                 IdentityUser user = await _userManager.FindByIdAsync(userId);
@@ -75,7 +79,8 @@ namespace WebApplication3
                 return NotFound();
             }
             [HttpPost]
-            public async Task<IActionResult> Edit(string userId, List<string> roles)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(string userId, List<string> roles)
             {
                 // получаем пользователя
                 IdentityUser user = await _userManager.FindByIdAsync(userId);

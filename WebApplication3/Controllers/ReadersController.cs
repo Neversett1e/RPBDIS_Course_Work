@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication3;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApplication3.Controllers
 {
@@ -19,14 +20,87 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Readers
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Index(
+    int page = 1,
+    string fullName = null,
+    DateTime? dateOfBirth = null,
+    string gender = null,
+    string address = null,
+    string phoneNumber = null,
+    string passportInfo = null,
+    ReadersSortState sortOrder = ReadersSortState.FullNameAsc
+)
         {
-              return _context.Readers != null ? 
-                          View(await _context.Readers.ToListAsync()) :
-                          Problem("Entity set 'LibraryDBContext.Readers'  is null.");
+            IQueryable<Reader> readers = _context.Readers;
+
+            if (!string.IsNullOrEmpty(fullName))
+            {
+                readers = readers.Where(r => r.FullName.Contains(fullName));
+            }
+
+            if (dateOfBirth.HasValue)
+            {
+                readers = readers.Where(r => r.DateOfBirth == dateOfBirth);
+            }
+
+            if (!string.IsNullOrEmpty(gender))
+            {
+                readers = readers.Where(r => r.Gender == gender);
+            }
+
+            if (!string.IsNullOrEmpty(address))
+            {
+                readers = readers.Where(r => r.Address.Contains(address));
+            }
+
+            if (!string.IsNullOrEmpty(phoneNumber))
+            {
+                readers = readers.Where(r => r.PhoneNumber.Contains(phoneNumber));
+            }
+
+            if (!string.IsNullOrEmpty(passportInfo))
+            {
+                readers = readers.Where(r => r.PassportInfo.Contains(passportInfo));
+            }
+
+            int pageSize = 10;
+
+            var count = await readers.CountAsync();
+            var items = await readers
+                .OrderBy(r => r.FullName) // Default sorting
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            switch (sortOrder)
+            {
+                case ReadersSortState.FullNameDesc:
+                    items = items.OrderByDescending(r => r.FullName).ToList();
+                    break;
+                case ReadersSortState.DateOfBirthDesc:
+                    items = items.OrderByDescending(r => r.DateOfBirth).ToList();
+                    break;
+                default:
+                    items = items.OrderBy(r => r.FullName).ToList();
+                    break;
+            }
+
+            var filterViewModel = new ReadersFilterViewModel(fullName, dateOfBirth, gender, address, phoneNumber, passportInfo);
+            var sortViewModel = new ReadersSortViewModel(sortOrder);
+            var pageViewModel = new PageViewModel(count, page, pageSize);
+
+            var viewModel = new PaginationViewModel<Reader, ReadersFilterViewModel, ReadersSortViewModel>(
+                items, pageViewModel, filterViewModel, sortViewModel
+            );
+
+            return View(viewModel);
         }
 
+
         // GET: Readers/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Readers == null)
@@ -45,6 +119,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Readers/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +130,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("ReaderId,FullName,DateOfBirth,Gender,Address,PhoneNumber,PassportInfo")] Reader reader)
         {
             if (ModelState.IsValid)
@@ -67,6 +143,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Readers/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Readers == null)
@@ -87,6 +164,7 @@ namespace WebApplication3.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("ReaderId,FullName,DateOfBirth,Gender,Address,PhoneNumber,PassportInfo")] Reader reader)
         {
             if (id != reader.ReaderId)
@@ -118,6 +196,7 @@ namespace WebApplication3.Controllers
         }
 
         // GET: Readers/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Readers == null)
@@ -138,6 +217,7 @@ namespace WebApplication3.Controllers
         // POST: Readers/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Readers == null)

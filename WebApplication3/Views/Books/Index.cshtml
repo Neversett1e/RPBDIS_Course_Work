@@ -1,10 +1,33 @@
-﻿@model IEnumerable<WebApplication3.Book>
+﻿@model PaginationViewModel<Book, BooksFilterViewModel, BooksSortViewModel>
+@addTagHelper *, WebApplication3
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+
+<form method="get" class="mt-1">
+    <label class="form-inline mt-1">ISBN: </label>
+    <input type="text" class="form-control" name="isbn" value="@Model.FilterViewModel.Isbn" />
+
+    <label class="form-inline mt-1">Title: </label>
+    <input type="text" class="form-control" name="title" value="@Model.FilterViewModel.Title" />
+
+    <label class="form-inline mt-1">Author: </label>
+    <input type="text" class="form-control" name="author" value="@Model.FilterViewModel.Author" />
+
+    <label class="form-inline mt-1">Publisher: </label>
+    <select class="form-control" name="publisherId" asp-items="Model.FilterViewModel.Publishers"></select>
+
+    <label class="form-inline mt-1">Genre: </label>
+    <select class="form-control" name="genreId" asp-items="Model.FilterViewModel.Genres"></select>
+
+    <label class="form-inline mt-1">Price: </label>
+    <input type="text" class="form-control" name="price" value="@Model.FilterViewModel.Price" />
+
+    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+</form>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,59 +36,100 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Isbn)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.IsbnSort)"
+                   asp-route-isbn="@(Model.FilterViewModel.Isbn)">
+                    @Html.DisplayNameFor(model => model.Items.First().Isbn)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.TitleSort)"
+                   asp-route-title="@(Model.FilterViewModel.Title)">
+                    @Html.DisplayNameFor(model => model.Items.First().Title)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.AuthorSort)"
+                   asp-route-author="@(Model.FilterViewModel.Author)">
+                    @Html.DisplayNameFor(model => model.Items.First().Author)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PublicationYear)
+                @Html.DisplayNameFor(model => model.Items.First().PublicationYear)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.PriceSort)"
+                   asp-route-price="@(Model.FilterViewModel.Price)">
+                    @Html.DisplayNameFor(model => model.Items.First().Price)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Genre)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.GenreSort)"
+                   asp-route-genreId="@(Model.FilterViewModel.GenreId)">
+                    @Html.DisplayNameFor(model => model.Items.First().Genre.GenreId)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Publisher)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.PublisherSort)"
+                   asp-route-publisherId="@(Model.FilterViewModel.PublisherId)">
+                    @Html.DisplayNameFor(model => model.Items.First().Publisher.PublisherId)
+                </a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Isbn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Author)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PublicationYear)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre.GenreId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Publisher.PublisherId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Isbn)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublicationYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Publisher.Name)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<page-link page-model="Model.PageViewModel" page-action="Index"
+           page-url-isbn="@(Model.FilterViewModel.Isbn)"
+           page-url-title="@(Model.FilterViewModel.Title)"
+           page-url-author="@(Model.FilterViewModel.Author)"
+           page-url-publisherId="@(Model.FilterViewModel.PublisherId)"
+           page-url-genreId="@(Model.FilterViewModel.GenreId)"
+           page-url-price="@(Model.FilterViewModel.Price)"
+           page-url-sortOrder="@(Model.SortViewModel.Current)"></page-link>
+

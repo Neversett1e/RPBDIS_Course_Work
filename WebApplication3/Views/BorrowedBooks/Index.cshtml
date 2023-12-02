@@ -1,10 +1,30 @@
-﻿@model IEnumerable<WebApplication3.BorrowedBook>
+﻿@model PaginationViewModel<BorrowedBook, BorrowedBookFilterViewModel, BorrowedBookSortViewModel>
+@addTagHelper *, WebApplication3
 
 @{
     ViewData["Title"] = "Index";
 }
 
 <h1>Index</h1>
+
+<form method="get" class="mt-1">
+    <label class="form-inline mt-1">Borrow Date: </label>
+    <input type="date" class="form-control" name="borrowDate" value="@Model.FilterViewModel.BorrowDate?.ToString("yyyy-MM-dd")" />
+
+    <label class="form-inline mt-1">Return Date: </label>
+    <input type="date" class="form-control" name="returnDate" value="@Model.FilterViewModel.ReturnDate?.ToString("yyyy-MM-dd")" />
+
+    <label class="form-inline mt-1">Returned: </label>
+    <select class="form-control" name="returned" asp-items="new SelectList(new List<bool>(){true, false})"></select>
+
+    <label class="form-inline mt-1">Employee: </label>
+    <select class="form-control" name="employeeId" asp-items="Model.FilterViewModel.Employees"></select>
+
+    <label class="form-inline mt-1">Reader: </label>
+    <select class="form-control" name="readerId" asp-items="Model.FilterViewModel.Readers"></select>
+
+    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+</form>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -13,53 +33,85 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.BorrowDate)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.BorrowDateSort)"
+                   asp-route-borrowDate="@(Model.FilterViewModel.BorrowDate?.ToString("yyyy-MM-dd"))">
+                    @Html.DisplayNameFor(model => model.Items.First().BorrowDate)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ReturnDate)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.ReturnDateSort)"
+                   asp-route-returnDate="@(Model.FilterViewModel.ReturnDate?.ToString("yyyy-MM-dd"))">
+                    @Html.DisplayNameFor(model => model.Items.First().ReturnDate)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Returned)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.ReturnedSort)"
+                   asp-route-returned="@(Model.FilterViewModel.Returned)">
+                    @Html.DisplayNameFor(model => model.Items.First().Returned)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Book)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.EmployeeSort)"
+                   asp-route-employeeId="@(Model.FilterViewModel.EmployeeId)">
+                    @Html.DisplayNameFor(model => model.Items.First().Employee.EmployeeId)
+                </a>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Employee)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reader)
+                <a asp-action="Index"
+                   asp-route-page="@(Model.PageViewModel.PageNumber)"
+                   asp-route-sortOrder="@(Model.SortViewModel.ReaderSort)"
+                   asp-route-readerId="@(Model.FilterViewModel.ReaderId)">
+                    @Html.DisplayNameFor(model => model.Items.First().Reader.ReaderId)
+                </a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BorrowDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReturnDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Returned)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Book.BookId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Employee.EmployeeId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reader.ReaderId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.BorrowId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.BorrowId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.BorrowId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BorrowDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReturnDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Returned)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Book.BookId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Employee.EmployeeId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reader.ReaderId)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.BorrowId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.BorrowId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.BorrowId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<page-link page-model="Model.PageViewModel" page-action="Index"
+           page-url-borrowDate="@(Model.FilterViewModel.BorrowDate?.ToString("yyyy-MM-dd"))"
+           page-url-returnDate="@(Model.FilterViewModel.ReturnDate?.ToString("yyyy-MM-dd"))"
+           page-url-returned="@(Model.FilterViewModel.Returned)"
+           page-url-employeeId="@(Model.FilterViewModel.EmployeeId)"
+           page-url-readerId="@(Model.FilterViewModel.ReaderId)"
+           page-url-sortOrder="@(Model.SortViewModel.Current)"></page-link>
+

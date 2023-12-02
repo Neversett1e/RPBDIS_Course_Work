@@ -21,12 +21,51 @@ namespace WebApplication3
         // GET: Genres
         [Authorize(Roles = "Admin")]
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, string name = null, string description = null, GenresSortState sortOrder = GenresSortState.NameAsc)
         {
-              return _context.Genres != null ? 
-                          View(await _context.Genres.ToListAsync()) :
-                          Problem("Entity set 'LibraryDBContext.Genres'  is null.");
+            IQueryable<Genre> genres = _context.Genres;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                genres = genres.Where(g => g.Name.Contains(name));
+            }
+
+            if (!string.IsNullOrEmpty(description))
+            {
+                genres = genres.Where(g => g.Description.Contains(description));
+            }
+
+            int pageSize = 10;
+
+            var count = await genres.CountAsync();
+            var items = await genres.OrderBy(g => g.GenreId)
+                                    .Skip((page - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
+
+            switch (sortOrder)
+            {
+                case GenresSortState.NameDesc:
+                    items = items.OrderByDescending(g => g.Name).ToList();
+                    break;
+                case GenresSortState.DescriptionDesc:
+                    items = items.OrderByDescending(g => g.Description).ToList();
+                    break;
+                default:
+                    items = items.OrderBy(g => g.Name).ToList();
+                    break;
+            }
+
+            PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+            var filterViewModel = new GenresFilterViewModel(name, description);
+            var sortViewModel = new GenresSortViewModel(sortOrder);
+
+            PaginationViewModel<Genre, GenresFilterViewModel, GenresSortViewModel> viewModel =
+                new PaginationViewModel<Genre, GenresFilterViewModel, GenresSortViewModel>(items, pageViewModel, filterViewModel, sortViewModel);
+
+            return View(viewModel);
         }
+
 
         // GET: Genres/Details/5
         public async Task<IActionResult> Details(int? id)

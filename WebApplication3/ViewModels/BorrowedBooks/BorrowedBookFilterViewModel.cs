@@ -17,12 +17,12 @@ namespace WebApplication3
             employees.Insert(0, new Employee { EmployeeId = 0, FullName = "Все" });
             readers.Insert(0, new Reader { ReaderId = 0, FullName = "Все" });
 
-            Employees = new SelectList(employees, "EmployeeId", "EmployeeName");
-            Readers = new SelectList(readers, "ReaderId", "ReaderName");
+            Employees = new SelectList(employees, "EmployeeId", "FullName");
+            Readers = new SelectList(readers, "ReaderId", "FullName");
 
+            Returned = returned;
             BorrowDate = borrowDate;
             ReturnDate = returnDate;
-            Returned = returned;
             EmployeeId = employeeId;
             ReaderId = readerId;
         }
