@@ -79,8 +79,14 @@ namespace WebApplication3.Controllers
                 case ReadersSortState.FullNameDesc:
                     items = items.OrderByDescending(r => r.FullName).ToList();
                     break;
+                case ReadersSortState.FullNameAsc:
+                    items = items.OrderBy(r => r.FullName).ToList();
+                    break;
                 case ReadersSortState.DateOfBirthDesc:
                     items = items.OrderByDescending(r => r.DateOfBirth).ToList();
+                    break;
+                case ReadersSortState.DateOfBirthAsc:
+                    items = items.OrderBy(r => r.DateOfBirth).ToList();
                     break;
                 default:
                     items = items.OrderBy(r => r.FullName).ToList();

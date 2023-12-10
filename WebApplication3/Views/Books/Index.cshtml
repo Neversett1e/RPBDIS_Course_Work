@@ -2,38 +2,38 @@
 @addTagHelper *, WebApplication3
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Записи";
 }
 
-<h1>Index</h1>
+<h1>Записи</h1>
 
 <form method="get" class="mt-1">
     <label class="form-inline mt-1">ISBN: </label>
     <input type="text" class="form-control" name="isbn" value="@Model.FilterViewModel.Isbn" />
 
-    <label class="form-inline mt-1">Title: </label>
+    <label class="form-inline mt-1">Название: </label>
     <input type="text" class="form-control" name="title" value="@Model.FilterViewModel.Title" />
 
-    <label class="form-inline mt-1">Author: </label>
+    <label class="form-inline mt-1">Автор: </label>
     <input type="text" class="form-control" name="author" value="@Model.FilterViewModel.Author" />
 
-    <label class="form-inline mt-1">Publication Year: </label>
+    <label class="form-inline mt-1">Год издания: </label>
     <input type="text" class="form-control" name="publicationYear" value="@Model.FilterViewModel.PublicationYear" />
 
-    <label class="form-inline mt-1">Publisher: </label>
+    <label class="form-inline mt-1">Издатель: </label>
     <select class="form-control" name="publisherId" asp-items="Model.FilterViewModel.Publishers"></select>
 
-    <label class="form-inline mt-1">Genre: </label>
+    <label class="form-inline mt-1">Жанр: </label>
     <select class="form-control" name="genreId" asp-items="Model.FilterViewModel.Genres"></select>
 
-    <label class="form-inline mt-1">Price: </label>
+    <label class="form-inline mt-1">Цена: </label>
     <input type="text" class="form-control" name="price" value="@Model.FilterViewModel.Price" />
 
-    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+    <input type="submit" value="Фильтр" class="btn btn-primary mt-2" />
 </form>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Создать новую запись</a>
 </p>
 <table class="table">
     <thead>
@@ -83,7 +83,7 @@
                    asp-route-page="@(Model.PageViewModel.PageNumber)"
                    asp-route-sortOrder="@(Model.SortViewModel.GenreSort)"
                    asp-route-genreId="@(Model.FilterViewModel.GenreId)">
-                    @Html.DisplayNameFor(model => model.Items.First().Genre.GenreId)
+                    @Html.DisplayNameFor(model => model.Items.First().GenreId)
                 </a>
             </th>
             <th>
@@ -91,7 +91,7 @@
                    asp-route-page="@(Model.PageViewModel.PageNumber)"
                    asp-route-sortOrder="@(Model.SortViewModel.PublisherSort)"
                    asp-route-publisherId="@(Model.FilterViewModel.PublisherId)">
-                    @Html.DisplayNameFor(model => model.Items.First().Publisher.PublisherId)
+                    @Html.DisplayNameFor(model => model.Items.First().PublisherId)
                 </a>
             </th>
             <th></th>
@@ -123,9 +123,9 @@
                     @Html.DisplayFor(modelItem => item.Publisher.Name)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.BookId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.BookId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.BookId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.BookId">Изменить</a> |
+                    <a asp-action="Details" asp-route-id="@item.BookId">Подробнее</a> |
+                    <a asp-action="Delete" asp-route-id="@item.BookId">Удалить</a>
                 </td>
             </tr>
         }

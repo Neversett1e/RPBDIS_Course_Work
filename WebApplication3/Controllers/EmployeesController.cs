@@ -65,19 +65,32 @@ namespace WebApplication3.Controllers
                 case EmployeeSortState.FullNameAsc:
                     items = items.OrderBy(e => e.FullName).ToList();
                     break;
+                case EmployeeSortState.FullNameDesc:
+                    items = items.OrderByDescending(e => e.FullName).ToList();
+                    break;
                 case EmployeeSortState.PositionAsc:
                     items = items.OrderBy(e => e.Position).ToList();
+                    break;
+                case EmployeeSortState.PositionDesc:
+                    items = items.OrderByDescending(e => e.Position).ToList();
                     break;
                 case EmployeeSortState.PhoneNumberAsc:
                     items = items.OrderBy(e => e.PhoneNumber).ToList();
                     break;
+                case EmployeeSortState.PhoneNumberDesc:
+                    items = items.OrderByDescending(e => e.PhoneNumber).ToList();
+                    break;
                 case EmployeeSortState.AddressAsc:
                     items = items.OrderBy(e => e.Address).ToList();
+                    break;
+                case EmployeeSortState.AddressDesc:
+                    items = items.OrderByDescending(e => e.Address).ToList();
                     break;
                 default:
                     items = items.OrderByDescending(e => e.FullName).ToList();
                     break;
             }
+
 
             var filterViewModel = new EmployeeFilterViewModel(fullName, position, phoneNumber, address);
             var sortViewModel = new EmployeeSortViewModel(sortOrder);

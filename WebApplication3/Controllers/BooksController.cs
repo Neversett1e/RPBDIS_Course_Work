@@ -73,23 +73,44 @@ namespace WebApplication3
                 case SortState.IsbnDesc:
                     items = items.OrderByDescending(b => b.Isbn).ToList();
                     break;
+                case SortState.IsbnAsc:
+                    items = items.OrderBy(b => b.Isbn).ToList();
+                    break;
                 case SortState.TitleDesc:
                     items = items.OrderByDescending(b => b.Title).ToList();
+                    break;
+                case SortState.TitleAsc:
+                    items = items.OrderBy(b => b.Title).ToList();
                     break;
                 case SortState.AuthorDesc:
                     items = items.OrderByDescending(b => b.Author).ToList();
                     break;
+                case SortState.AuthorAsc:
+                    items = items.OrderBy(b => b.Author).ToList();
+                    break;
                 case SortState.PublisherDesc:
                     items = items.OrderByDescending(b => b.Publisher.Name).ToList();
+                    break;
+                case SortState.PublisherAsc:
+                    items = items.OrderBy(b => b.Publisher.Name).ToList();
                     break;
                 case SortState.GenreDesc:
                     items = items.OrderByDescending(b => b.Genre.Name).ToList();
                     break;
+                case SortState.GenreAsc:
+                    items = items.OrderBy(b => b.Genre.Name).ToList();
+                    break;
                 case SortState.PriceDesc:
                     items = items.OrderByDescending(b => b.Price).ToList();
                     break;
+                case SortState.PriceAsc:
+                    items = items.OrderBy(b => b.Price).ToList();
+                    break;
                 case SortState.PublicationYearDesc:
                     items = items.OrderByDescending(b => b.PublicationYear).ToList();
+                    break;
+                case SortState.PublicationYearAsc:
+                    items = items.OrderBy(b => b.PublicationYear).ToList();
                     break;
                 default:
                     items = items.OrderBy(b => b.Title).ToList();

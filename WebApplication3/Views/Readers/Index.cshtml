@@ -2,35 +2,35 @@
 @addTagHelper *, WebApplication3
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Список записей";
 }
 
-<h1>Index</h1>
+<h1>Список записей</h1>
 
 <form method="get" class="mt-1">
-    <label class="form-inline mt-1">Full Name: </label>
+    <label class="form-inline mt-1">ФИО: </label>
     <input type="text" class="form-control" name="fullName" value="@Model.FilterViewModel.FullName" />
 
-    <label class="form-inline mt-1">Date of Birth: </label>
+    <label class="form-inline mt-1">Дата рождения: </label>
     <input type="date" class="form-control" name="dateOfBirth" value="@Model.FilterViewModel.DateOfBirth?.ToString("yyyy-MM-dd")" />
 
-    <label class="form-inline mt-1">Gender: </label>
+    <label class="form-inline mt-1">Пол: </label>
     <input type="text" class="form-control" name="gender" value="@Model.FilterViewModel.Gender" />
 
-    <label class="form-inline mt-1">Address: </label>
+    <label class="form-inline mt-1">Адрес: </label>
     <input type="text" class="form-control" name="address" value="@Model.FilterViewModel.Address" />
 
-    <label class="form-inline mt-1">Phone Number: </label>
+    <label class="form-inline mt-1">Номер телефона: </label>
     <input type="text" class="form-control" name="phoneNumber" value="@Model.FilterViewModel.PhoneNumber" />
 
-    <label class="form-inline mt-1">Passport Info: </label>
+    <label class="form-inline mt-1">Номер паспорта: </label>
     <input type="text" class="form-control" name="passportInfo" value="@Model.FilterViewModel.PassportInfo" />
 
-    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+    <input type="submit" value="Фильтр" class="btn btn-primary mt-2" />
 </form>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Создать запись</a>
 </p>
 <table class="table">
     <thead>
@@ -109,9 +109,9 @@
                     @Html.DisplayFor(modelItem => item.PassportInfo)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.ReaderId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ReaderId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ReaderId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.ReaderId">Изменить</a> |
+                    <a asp-action="Details" asp-route-id="@item.ReaderId">Подробности</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ReaderId">Удалить</a>
                 </td>
             </tr>
         }

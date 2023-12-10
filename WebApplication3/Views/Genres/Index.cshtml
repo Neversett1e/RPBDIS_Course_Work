@@ -2,23 +2,23 @@
 @addTagHelper *, WebApplication3
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Список записей";
 }
 
-<h1>Index</h1>
+<h1>Список записей</h1>
 
 <form method="get" class="mt-1">
-    <label class="form-inline mt-1">Name: </label>
+    <label class="form-inline mt-1">Название жанра: </label>
     <input type="text" class="form-control" name="name" value="@Model.FilterViewModel.Name" />
 
-    <label class="form-inline mt-1">Description: </label>
+    <label class="form-inline mt-1">Описание жанра: </label>
     <input type="text" class="form-control" name="description" value="@Model.FilterViewModel.Description" />
 
-    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+    <input type="submit" value="Фильтр" class="btn btn-primary mt-2" />
 </form>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Создать запись</a>
 </p>
 <table class="table">
     <thead>
@@ -55,9 +55,9 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.GenreId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.GenreId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.GenreId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.GenreId">Изменить</a> |
+                    <a asp-action="Details" asp-route-id="@item.GenreId">Подробности</a> |
+                    <a asp-action="Delete" asp-route-id="@item.GenreId">Удалить</a>
                 </td>
             </tr>
         }

@@ -30,7 +30,8 @@ namespace WebApplication3
     int employeeId = 0,
     int readerId = 0,
     BorrowedBookSortState sortOrder = BorrowedBookSortState.BorrowDateAsc,
-    string bookTitle = null
+    string bookTitle = null,
+    bool filterOverdue = false // Add this parameter
             )
         {
             IQueryable<BorrowedBook> borrowedBooks = _context.BorrowedBooks
@@ -68,6 +69,11 @@ namespace WebApplication3
                 borrowedBooks = borrowedBooks.Where(b => b.Book.Title.Contains(bookTitle));
             }
 
+            if (filterOverdue)
+            {
+                borrowedBooks = borrowedBooks.Where(b => b.ReturnDate < DateTime.Now);
+            }
+
             int pageSize = 10;
 
             var count = await borrowedBooks.CountAsync();
@@ -82,23 +88,41 @@ namespace WebApplication3
                 case BorrowedBookSortState.BorrowDateDesc:
                     items = items.OrderByDescending(b => b.BorrowDate).ToList();
                     break;
+                case BorrowedBookSortState.BorrowDateAsc:
+                    items = items.OrderBy(b => b.BorrowDate).ToList();
+                    break;
                 case BorrowedBookSortState.ReturnDateDesc:
                     items = items.OrderByDescending(b => b.ReturnDate).ToList();
+                    break;
+                case BorrowedBookSortState.ReturnDateAsc:
+                    items = items.OrderBy(b => b.ReturnDate).ToList();
                     break;
                 case BorrowedBookSortState.ReturnedDesc:
                     items = items.OrderByDescending(b => b.Returned).ToList();
                     break;
+                case BorrowedBookSortState.ReturnedAsc:
+                    items = items.OrderBy(b => b.Returned).ToList();
+                    break;
                 case BorrowedBookSortState.EmployeeDesc:
                     items = items.OrderByDescending(b => b.Employee.FullName).ToList();
+                    break;
+                case BorrowedBookSortState.EmployeeAsc:
+                    items = items.OrderBy(b => b.Employee.FullName).ToList();
                     break;
                 case BorrowedBookSortState.ReaderDesc:
                     items = items.OrderByDescending(b => b.Reader.FullName).ToList();
                     break;
+                case BorrowedBookSortState.ReaderAsc:
+                    items = items.OrderBy(b => b.Reader.FullName).ToList();
+                    break;
                 case BorrowedBookSortState.BookTitleDesc:
                     items = items.OrderByDescending(b => b.Book.Title).ToList();
                     break;
-                default:
+                case BorrowedBookSortState.BookTitleAsc:
                     items = items.OrderBy(b => b.Book.Title).ToList();
+                    break;
+                default:
+                    items = items.OrderBy(b => b.BorrowId).ToList();
                     break;
             }
 

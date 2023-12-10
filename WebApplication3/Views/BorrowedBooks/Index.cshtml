@@ -2,35 +2,50 @@
 @addTagHelper *, WebApplication3
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Список записей";
 }
 
-<h1>Index</h1>
+<h1>Список записей</h1>
 
 <form method="get" class="mt-1">
-    <label class="form-inline mt-1">Borrow Date: </label>
+    <label class="form-inline mt-1">Дата выдачи: </label>
     <input type="date" class="form-control" name="borrowDate" value="@Model.FilterViewModel.BorrowDate?.ToString("yyyy-MM-dd")" />
 
-    <label class="form-inline mt-1">Return Date: </label>
+    <label class="form-inline mt-1">Срок возврата: </label>
     <input type="date" class="form-control" name="returnDate" value="@Model.FilterViewModel.ReturnDate?.ToString("yyyy-MM-dd")" />
 
-    <label class="form-inline mt-1">Returned: </label>
-    <select class="form-control" name="returned" asp-items="new SelectList(new List<bool>(){true, false})"></select>
+    <label class="form-inline mt-1">Отметка о возврате: </label>
+    <select class="form-control" name="returned" asp-items="new SelectList(new List<bool?>(){null, true, false})"></select>
 
-    <label class="form-inline mt-1">Title: </label>
+    <label class="form-inline mt-1">Название книги: </label>
     <input type="text" class="form-control" name="bookTitle" value="@Model.FilterViewModel.BookTitle" />
 
-    <label class="form-inline mt-1">Employee: </label>
+    <label class="form-inline mt-1">Сотрудник: </label>
     <select class="form-control" name="employeeId" asp-items="Model.FilterViewModel.Employees"></select>
 
-    <label class="form-inline mt-1">Reader: </label>
+    <label class="form-inline mt-1">Читатель: </label>
     <select class="form-control" name="readerId" asp-items="Model.FilterViewModel.Readers"></select>
 
-    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+    <input type="hidden" name="filterOverdue" id="filterOverdueInput" value="false" />
+
+    <button type="button" id="filterOverdueBtn" class="btn btn-warning mt-2">Просрочившие возврат</button>
+
+    <input type="submit" value="Фильтр" class="btn btn-primary mt-2" />
 </form>
 
+<script>
+    document.getElementById('filterOverdueBtn').addEventListener('click', function () {
+        var filterOverdueInput = document.getElementById('filterOverdueInput');
+
+
+        filterOverdueInput.value = (filterOverdueInput.value === 'true') ? 'false' : 'true';
+
+        document.forms[0].submit();
+    });
+</script>
+
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Создать запись</a>
 </p>
 <table class="table">
     <thead>
@@ -72,7 +87,7 @@
                    asp-route-page="@(Model.PageViewModel.PageNumber)"
                    asp-route-sortOrder="@(Model.SortViewModel.EmployeeSort)"
                    asp-route-employeeId="@(Model.FilterViewModel.EmployeeId)">
-                    @Html.DisplayNameFor(model => model.Items.First().Employee.EmployeeId)
+                    @Html.DisplayNameFor(model => model.Items.First().EmployeeId)
                 </a>
             </th>
             <th>
@@ -80,7 +95,7 @@
                    asp-route-page="@(Model.PageViewModel.PageNumber)"
                    asp-route-sortOrder="@(Model.SortViewModel.ReaderSort)"
                    asp-route-readerId="@(Model.FilterViewModel.ReaderId)">
-                    @Html.DisplayNameFor(model => model.Items.First().Reader.ReaderId)
+                    @Html.DisplayNameFor(model => model.Items.First().ReaderId)
                 </a>
             </th>
             <th></th>
@@ -109,9 +124,9 @@
                     @Html.DisplayFor(modelItem => item.Reader.FullName)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.BorrowId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.BorrowId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.BorrowId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.BorrowId">Изменить</a> |
+                    <a asp-action="Details" asp-route-id="@item.BorrowId">Подробности</a> |
+                    <a asp-action="Delete" asp-route-id="@item.BorrowId">Удалить</a>
                 </td>
             </tr>
         }

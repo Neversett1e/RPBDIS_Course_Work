@@ -1,13 +1,13 @@
 ﻿@model WebApplication3.BorrowedBook
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Подробности";
 }
 
-<h1>Details</h1>
+<h1>Подробности</h1>
 
 <div>
-    <h4>BorrowedBook</h4>
+    <h4>Взятые книги</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -49,6 +49,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.BorrowId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.BorrowId">Изменить запись</a> |
+    <a asp-action="Index">Обратно к списку</a>
 </div>

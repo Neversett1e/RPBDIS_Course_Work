@@ -2,29 +2,29 @@
 @addTagHelper *, WebApplication3
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Список записей";
 }
 
-<h1>Index</h1>
+<h1>Список записей</h1>
 
 <form method="get" class="mt-1">
-    <label class="form-inline mt-1">Full Name: </label>
+    <label class="form-inline mt-1">ФИО: </label>
     <input type="text" class="form-control" name="fullName" value="@Model.FilterViewModel.FullName" />
 
-    <label class="form-inline mt-1">Position: </label>
+    <label class="form-inline mt-1">Должность: </label>
     <input type="text" class="form-control" name="position" value="@Model.FilterViewModel.Position" />
 
-    <label class="form-inline mt-1">Phone Number: </label>
+    <label class="form-inline mt-1">Номер телефона: </label>
     <input type="text" class="form-control" name="phoneNumber" value="@Model.FilterViewModel.PhoneNumber" />
 
-    <label class="form-inline mt-1">Address: </label>
+    <label class="form-inline mt-1">Арес: </label>
     <input type="text" class="form-control" name="address" value="@Model.FilterViewModel.Address" />
 
-    <input type="submit" value="Filter" class="btn btn-primary mt-2" />
+    <input type="submit" value="Фильтр" class="btn btn-primary mt-2" />
 </form>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Создать запись</a>
 </p>
 <table class="table">
     <thead>
@@ -81,9 +81,9 @@
                     @Html.DisplayFor(modelItem => item.Address)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.EmployeeId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.EmployeeId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.EmployeeId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.EmployeeId">Изменить</a> |
+                    <a asp-action="Details" asp-route-id="@item.EmployeeId">Детали</a> |
+                    <a asp-action="Delete" asp-route-id="@item.EmployeeId">Удалить</a>
                 </td>
             </tr>
         }

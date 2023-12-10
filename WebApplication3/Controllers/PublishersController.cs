@@ -61,16 +61,26 @@ namespace WebApplication3.Controllers
                 case PublisherSortState.NameDesc:
                     items = items.OrderByDescending(p => p.Name).ToList();
                     break;
+                case PublisherSortState.NameAsc:
+                    items = items.OrderBy(p => p.Name).ToList();
+                    break;
                 case PublisherSortState.CityDesc:
                     items = items.OrderByDescending(p => p.City).ToList();
                     break;
+                case PublisherSortState.CityAsc:
+                    items = items.OrderBy(p => p.City).ToList();
+                    break;
                 case PublisherSortState.AddressDesc:
                     items = items.OrderByDescending(p => p.Address).ToList();
+                    break;
+                case PublisherSortState.AddressAsc:
+                    items = items.OrderBy(p => p.Address).ToList();
                     break;
                 default:
                     items = items.OrderBy(p => p.Name).ToList();
                     break;
             }
+
 
             var filterViewModel = new PublisherFilterViewModel(name, city, address);
             var sortViewModel = new PublisherSortViewModel(sortOrder);
